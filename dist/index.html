@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container" style="text-align:  center;">
+        <div class="row">
+
+            <h4>Clique para recuperar o número de inscritos
+                <br> do Canal Boas Novas:</h4>
+            <button class="btn blue" onclick="recuperaInscritos()">Recuperar Inscritos</button>
+            <h5 id="numInscritos"></h5>
+        </div>
+    </div>
+</body>
+
+<script>
+
+    var numInscritos;
+
+    function recuperaInscritos() {
+
+        var channelID = 'UCopVMAEcdblYjF1-4Z7rcvw';
+        //var channelID = 'UC6KKh6eK3DIBMznzBiA4XOw';
+        var myApiKey = 'AIzaSyDGV2PiBk6akZDvsXeHQGfISAymmc4AKV4';
+        let url = 'https://www.googleapis.com/youtube/v3/channels?part=statistics&id=' + channelID +
+            '&fields=items/statistics/subscriberCount&key=' + myApiKey;
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status = 200)
+                    var channelStatistics = (JSON.parse(xhr.responseText));
+                numInscritos = (channelStatistics.items[0].statistics.subscriberCount);
+                document.getElementById('numInscritos').innerHTML = 'Número de Inscritos: '
+                    + numInscritos + '<br><button class="btn green" onclick="create()">Salvar N° de Inscritos</button>';
+            }
+        }
+        xhr.send();
+    }
+
+    function create() {
+        axios.post('/create', { numInscritos })
+            .then(function (response) {
+                console.log(response);
+                alert('Numero de Inscritos Salvo com Sucesso');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+</script>
+
+</html>
